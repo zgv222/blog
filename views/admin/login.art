@@ -1,0 +1,81 @@
+{{extend './common/layout.art'}}
+
+
+{{block 'link'}}
+<style>
+    body,
+    .login-body {
+        background: url(../tree.jpg);
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+
+
+    }
+
+    #err {
+        display: none;
+    }
+</style>
+{{/block}}
+
+{{block 'main'}}
+
+<div class="login-body">
+    <div class="login-container">
+        <h4 class="title">zgv - 博客管理员登录</h4>
+        <div class="login">
+            <form action="/admin/login" method="POST" id="loginform">
+                <div class="form-group">
+                    <label>邮件</label>
+                    <input type="email" class="form-control" placeholder="请输入邮件地址" name="email">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" class="form-control" placeholder="请输入密码" name="password">
+                </div>
+                <span id="err">邮件或密码错误</span>
+                <button type="submit" class="btn btn-primary">登录</button>
+            </form>
+        </div>
+        <div class="tips"></div>
+    </div>
+</div>
+
+{{/block}}
+
+{{block 'script'}}
+
+<script>
+
+    $('#loginform').on('submit', function () {
+
+        /*为什么要使用serializeArrayToJson？
+        防止用户提交空白表单，先将其拦截，判断表单中的数据长度，通过后发送表单
+        */
+        let result = serializeArrayToJson($(this));
+        if (result.email.trim().length == 0)//如果用户没有输入内容
+        {
+            alert('请输入邮件地址')
+            //阻止程序向下执行
+            return false;
+        }
+        if (result.password.trim().length == 0) {
+            alert('请输入密码')
+            return false;
+        }
+
+
+        //ajax操作
+        // let err = document.querySelector('#err')
+        // ajax('http://localhost:44502/ajax', result => {
+        //     if (result == 'true')
+        //         err.style.display = 'inline'
+        // })
+
+        // return false;
+
+
+
+    })
+</script>
+{{/block}}

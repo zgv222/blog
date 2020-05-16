@@ -1,0 +1,98 @@
+{{extend './common/layout.art'}}
+
+{{block 'main'}}
+{{include './common/header.art'}}
+<!-- 主体内容 -->
+<div class="content">
+    {{include './common/aside.art'}}
+    <div class="main">
+        <!-- 分类标题 -->
+        <div class="title">
+            <h4></h4>
+        </div>
+        <!-- enctype指定表单数据的编码类型
+            默认的编码类型application/x-www-form-urlencoded          name=zhangsan&age=20   的格式发送到服务器
+            当表单中存在文件上传等操作，要以二进制的格式发送到服务器
+            multipart/form-data  将表单数据编码成二进制类型
+        -->
+        <!-- /分类标题 -->
+        <form class="form-container" action="{{link}}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>标题</label>
+                <input type="text" class="form-control" placeholder="请输入文章标题" name="title"
+                    value="{{findarticle && findarticle.title}}">
+            </div>
+            <div class="form-group">
+                <label>作者</label>
+                <input type="text" class="form-control" readonly name="author" value="{{@userInfo._id}}">
+            </div>
+            <div class="form-group">
+                <label>发布时间</label>
+                <input type="date" class="form-control" name="publishDate"
+                    value="{{findarticle && dateformat(findarticle.publishDate, 'yyyy-mm-dd')}}">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputFile">文章封面</label>
+                <input type="file" name="cover" id="file" value="">
+                <input type="hidden" name="changecover" id="changecover">
+                <!-- multipart属性可以用于多选文件 -->
+                <div class="thumbnail-waper">
+                    <img class="img-thumbnail" src="{{findarticle && findarticle.cover}}" id="picture">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>内容</label>
+                <textarea class="form-control" id="editor"
+                    name="content"> {{findarticle && findarticle.content}}</textarea>
+            </div>
+            <div class="buttons">
+                <input type="submit" class="btn btn-primary" value="{{button}}">
+            </div>
+        </form>
+
+    </div>
+</div>
+<!-- /主体内容 -->
+{{/block}}
+
+{{block 'script'}}
+<script src=" /admin/lib/ckeditor5/ckeditor.js"></script>
+<script type="text/javascript">
+
+    let editor;
+
+    ClassicEditor
+        .create(document.querySelector('#editor'))
+        .then(newEditor => {
+            editor = newEditor;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    // 获取数据
+    // const editorData = editor.getData();
+
+    //选择文件选择控件
+    var file = document.querySelector('#file');
+    var picture = document.querySelector('#picture');
+    var img = document.querySelector('img');
+
+
+
+    file.onchange = function () {
+        //如果修改了，发送信号叫路由更新封面，否则不用更新
+        $('#changecover').val('yes');
+        //1. 创建文件读取对象
+        var reader = new FileReader();
+        //2. 读取用户选择的文件     this.files表示当前选择的文件对象,因为files是一个数组，所以要加下标
+        reader.readAsDataURL(this.files[0]);//这是一个异步方法，不能直接返回值
+        // 3. 监听onload事件
+        reader.onload = function () {
+            // 4. 将文件读取的结果显示在页面中
+            picture.src = reader.result;
+        }
+    }
+</script>
+{{/block}}

@@ -1,0 +1,51 @@
+{{extend './common/layout.art'}}
+
+{{block 'link'}}
+<link rel="stylesheet" href="/home/css/base.css">
+<link rel="stylesheet" href="/home/css/index.css">
+{{/block}}
+
+{{block 'main'}}
+<!-- 文章列表开始 -->
+<ul class="list w1100">
+	{{each findarticle.records}}
+	<li class="fl">
+		<a href="/home/article?id={{@$value._id}}" class="thumbnail">
+			<img src="{{$value.cover}}">
+		</a>
+		<div class="content">
+			<a class="article-title" href="/home/article?id={{@$value._id}}">{{$value.title}}</a>
+			<div class="article-info">
+				<span class="author">{{$value.author.username}}</span>
+				<span>{{dateformat($value.publishDate, 'yyyy-mm-dd')}}</span>
+			</div>
+			<div class="brief">
+				{{@$value.content.replace(/<[^>]+>/g, '').substr(0, 90) + '...'}}
+				<!-- 前言 “我们相信互联网的世界和实体的商业世界是一个世界。数字、数据化、技术，使得这两个世界走在一起，让这两个世界能够发生很美好的变化，创造更多的客户价值和商业价值。”—... -->
+			</div>
+		</div>
+	</li>
+	{{/each}}
+
+
+
+</ul>
+<!-- 文章列表结束 -->
+
+<!-- 分页开始 -->
+<div class="page w1100">
+	{{if findarticle.page > 1}}
+	<a href="/home/?page={{findarticle.page-1}}">上一页</a>
+	{{/if}}
+
+	{{each findarticle.display}}
+
+	<a href="/home/?page={{$value}}" class="{{$value == findarticle.page ? 'active' : ''}}">{{$value}}</a>
+	{{/each}}
+
+	{{if findarticle.page < findarticle.pages}}
+	<a href="/home/?page={{findarticle.page - 0 + 1}}">下一页</a>
+	{{/if}}
+</div>
+<!-- 分页结束 -->
+{{/block}}
